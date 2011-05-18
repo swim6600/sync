@@ -13,8 +13,9 @@ class app extends object {
 
 		$this->smarty = new Smarty();
 		
-		$this->smarty->debugging = true;
-
+		$this->smarty->debugging = false;
+		$this->smarty->force_compile = true;
+		
 		$this->smarty->template_dir = config::read("root") . 'views/';
 		$this->smarty->compile_dir = config::read("root") . 'temp/templates_c/';
 		$this->smarty->config_dir = config::read("root") . 'config/';
