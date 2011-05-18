@@ -16,7 +16,7 @@ class session {
 	}
 
 	public static function get($var) {
-		if($this->exists($var)) {
+		if(self::exists($var)) {
 			return $_SESSION[$var];
 		}else {
 			return false;

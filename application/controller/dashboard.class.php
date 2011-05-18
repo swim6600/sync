@@ -7,6 +7,8 @@ class dashboard extends app {
     }
     
     public function index() {
-    	$this->smarty->display("php:welcome.tpl");
+		$smartyVars = array("user" => $this->user);
+		$this->smarty->assign($smartyVars);
+    	$this->smarty->display("php:dashboard.tpl");
     }
 }

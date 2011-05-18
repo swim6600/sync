@@ -4,6 +4,7 @@ class dbManager {
 
 	public function __construct() {
 		require config::read('vendor') . 'adodb.inc.php';
+		require config::read('vendor') . 'adodb_active_record.inc.php';
 	}
 
 	public function getInstance($profile = 'production') {
@@ -22,6 +23,7 @@ class dbManager {
 			}
 			$db->execute("set names utf8");
 			config::write("DB.connection." . $profile, $db);
+			ADODB_Active_Record::SetDatabaseAdapter($db);
 			return $db;
 		}else {
 			return $object;
