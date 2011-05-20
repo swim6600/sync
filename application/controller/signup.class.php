@@ -7,6 +7,7 @@ class signup extends app {
 	}
 
 	public function index() {
+		$this->init_smarty();
 		$smartyVars = array("title" => __("Sign up", true));
 		$this->smarty->assign($smartyVars);
 		$this->smarty->display("php:signup.tpl");
@@ -29,7 +30,7 @@ class signup extends app {
 				throw new Exception(__("exception when creating user", true));
 			}
 			$this->login($user->email, $password);
-			$this->redirect("/");
+			$this->redirect();
 		}
 	}
 }

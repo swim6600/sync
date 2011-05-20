@@ -1,10 +1,21 @@
 <?php
 require_once 'autoload.php';
-config::write('http', '/');
+config::write('base.uri', 'http://192.168.100.51/');
 config::write('debug', '1');
 config::write('index.controller', 'welcome');
 
-config::write('production.host', 'sync.me');
+
+config::write('TWITTER_CONSUMER_KEY', 'i68binlpzc6qEM7RjKGZQA');
+config::write('TWITTER_CONSUMER_SECRET', 'Em7UsufAA5YFs7I55t3hNTfTlWVfRoJtrv4KmaeVGhc');
+config::write('WEIBO_CONSUMER_KEY', '167761523');
+config::write('WEIBO_CONSUMER_SECRET', 'bb36d8eb19a0818a0008702275170c23');
+
+//config::write("cookie_expire", 3600 * 24 * 7);
+config::write("cookie_expire", 3000);
+config::write("cookie_path", "/");
+config::write("cookie_domain", "sync.me");
+
+config::write('production.host', 'localhost');
 config::write('production.user', 'root');
 config::write('production.password', 'root');
 config::write('production.database', 'sync');

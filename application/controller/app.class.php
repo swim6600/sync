@@ -1,6 +1,5 @@
 <?php
 class app extends object {
-	public $session;
 	public $smarty;
 	public $db;
 
@@ -9,12 +8,11 @@ class app extends object {
 		if(session::exists("user")) {
 			$this->user = session::get("user");
 		}
-		$this->init_smarty();
 	}
 
-	public function init_db() {
+	protected function init_db($profile = "production") {
 		$databaseManager = new dbManager();
-		$this->db = $databaseManager->getInstance();
+		$this->db = $databaseManager->getInstance($profile);
 	}
 
 	protected function init_smarty() {
@@ -64,11 +62,11 @@ class app extends object {
 		}
 	}
 
-	public function is_post() {
+	protected function is_post() {
 		return $_SERVER["REQUEST_METHOD"] == "POST";
 	}
 
-	public function login($email = "", $password = "") {
+	protected function login($email = "", $password = "") {
 		if(session::get("user")) {
 			return true;
 		}else {
@@ -81,9 +79,10 @@ class app extends object {
 			$res = $user->Find("email = ?", array($email));
 			if($res && $res[0]->password == md5($password)) {
 				$currentUser = array();
+				$currentUser["id"] = $res[0]->id;
 				$currentUser["email"] = $email;
-				$currentUser["is_admin"] = $user->is_admin;
-				$currentUser["confirmed"] = $user->confirmed;
+				$currentUser["is_admin"] = $res[0]->is_admin;
+				$currentUser["confirmed"] = $res[0]->confirmed;
 				
 				session::set("user", $currentUser);
 				return true;
@@ -93,13 +92,17 @@ class app extends object {
 		}
 	}
 	
-	public function logout() {
+	protected function logout() {
 		if(session::get("user")) {
+			session::delcookie("user");
 			session::del("user");
 		}
 	}
 
-	public function redirect($url = "/") {
+	public function redirect($url = "", $baseURI = true) {
+		if($baseURI) {
+			$url = config::read("base.uri") . $url;
+		}
 		header("location: " . $url);
 		exit;
 	}

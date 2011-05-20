@@ -7,6 +7,7 @@ class welcome extends app {
     }
     
     public function index() {
+		$this->init_smarty();
     	$this->smarty->display("php:welcome.tpl");
     }
 }

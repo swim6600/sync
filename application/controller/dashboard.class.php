@@ -7,7 +7,12 @@ class dashboard extends app {
     }
     
     public function index() {
-		$smartyVars = array("user" => $this->user);
+    	$this->init_db();
+		$this->init_smarty();
+		$relation = new relation();
+		$weibo = array();
+		$weibo["is_connected"] = $relation->is_connected($this->user["id"], "weibo");
+		$smartyVars = array("user" => $this->user, "weibo" => $weibo);
 		$this->smarty->assign($smartyVars);
     	$this->smarty->display("php:dashboard.tpl");
     }
