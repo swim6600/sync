@@ -3,8 +3,8 @@ class dbManager {
 	public $db;
 
 	public function __construct() {
-		require config::read('vendor') . 'adodb.inc.php';
-		require config::read('vendor') . 'adodb_active_record.inc.php';
+		require_once config::read('vendor') . 'adodb.inc.php';
+		require_once config::read('vendor') . 'adodb-active-record.inc.php';
 	}
 
 	public function getInstance($profile = 'production') {

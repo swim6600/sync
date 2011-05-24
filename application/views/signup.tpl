@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css">
-@import "css/default.css";
+@import "/css/default.css";
 </style>
 </head>
 <body>

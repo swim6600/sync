@@ -28,12 +28,20 @@ if(class_exists($controller)) {
 	if($dispatch->authorization && $auth->authorized == false) {
 		// go login page
 		$dispatch = new signin;
+		$action = false;
 		$redirect = urlencode($_SERVER["REQUEST_URI"]);
+	}elseif($auth->authorized && $controller == config::read('index.controller')) {
+		$controller = config::read('auth.controller');
+		$dispatch = new $controller;
 	}else {
 		$redirect = $auth->get("go");
 	}
 	if($action === false) {
-		$dispatch->index($redirect);
+		if(isset($redirect)) {
+			$dispatch->index($redirect);
+		}else {
+			$dispatch->index();
+		}
 	}else {
 		$dispatch->$action();
 	}

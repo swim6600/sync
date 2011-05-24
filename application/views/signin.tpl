@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css">
-@import "css/default.css";
+@import "/css/default.css";
 </style>
 </head>
 <body>
@@ -14,6 +14,7 @@
 <ul>
 <li>email: <input type="text" name="email" class="input" /></li>
 <li>password: <input type="password" name="password" class="input" /></li>
+<li><input type="hidden" name="redirect" class="input" value="<?php echo $redirect;?>" /></li>
 <li><input type="submit" /></li>
 </ul>
 </form>

@@ -28,6 +28,24 @@ class weibo extends app {
 		var_dump($user_timeline);
 	}
 
+	public function main_network() {
+		$this->init();
+		$this->init_db();
+		$relation = new relation();
+		$data = $relation->getRelation($this->user["id"], "weibo");
+		$o = new WeiboClient(WB_AKEY, WB_SKEY, $data->token, $data->token_secret);
+		$latest_timeline = $o->user_timeline(1, 1, $data->network_user_id);
+		$this->db->BeginTrans();
+		$query = "update relations set is_main_network = 1, since_id = ? where user_id = ? and network = 'weibo'";
+		$ok = $this->db->execute($query, array($latest_timeline[0]["id"], $this->user["id"]));
+		if($ok) {
+			$query = "update relations set is_main_network = 0 where user_id = ? and network != 'weibo'";
+			$ok = $this->db->execute($query, array($this->user["id"]));
+		}
+		$this->db->CommitTrans($ok);
+		$this->redirect("dashboard");
+	}
+	
 	public function callback() {
 		$this->init();
 		$token = session::get("weiboRequestToken");
@@ -70,7 +88,7 @@ class weibo extends app {
 
 	public function disconnect() {
 		$this->init_db();
-		$query = "delete from relations where id = ?";
+		$query = "delete from relations where user_id = ? and network = 'weibo'";
 		$this->db->execute($query, array($this->user["id"]));
 		$this->redirect("dashboard");
 	}

@@ -5,7 +5,7 @@
  * @return
  * @author tuguska
  */
-require_once 'oauth.php';
+require_once dirname(__FILE__) . '/../oauth.php';
 
 class MBOpenTOAuth {
 	public $host = 'http://open.t.qq.com/';

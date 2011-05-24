@@ -6,9 +6,9 @@ class signin extends app {
 		parent::__construct();
 	}
 
-	public function index() {
+	public function index($redirect) {
 		$this->init_smarty();
-		$smartyVars = array("title" => __("Sign in", true));
+		$smartyVars = array("title" => __("Sign in", true), "redirect" => $redirect);
 		$this->smarty->assign($smartyVars);
 		$this->smarty->display("php:signin.tpl");
 	}
@@ -16,7 +16,11 @@ class signin extends app {
 	public function auth() {
 		if($this->is_post()) {
 			if($this->login($this->get("email"), $this->get("password"))) {
-				$this->redirect("dashboard");
+				if($redirect = $this->get("redirect")) {
+					$this->redirect(urldecode($redirect));
+				}else {
+					$this->redirect("dashboard");
+				}
 			}else {
 				throw new Exception(__("signin failed", true));
 			}
