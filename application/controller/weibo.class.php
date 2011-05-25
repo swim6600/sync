@@ -13,11 +13,6 @@ class weibo extends app {
 		define("WB_SKEY", config::read("WEIBO_CONSUMER_SECRET"));
 	}
 
-	public function index() {
-		//$this->init_smarty();
-		//$this->smarty->display("php:welcome.tpl");
-	}
-	
 	public function user_timeline() {
 		$this->init();
     	$this->init_db();
@@ -64,7 +59,12 @@ class weibo extends app {
 		$relation->network_user_id = $accessToken["user_id"];
 		$relation->screen_name = $profile["screen_name"];
 		$relation->since_id = $profile["status"]["id"];
-		$relation->is_main_network = 1;
+		$connectedNum = $relation->getConnectedNum();
+		if($connectedNum) {
+			$relation->is_main_network = 0;
+		}else {
+			$relation->is_main_network = 1;
+		}
 		$relation->token = $accessToken["oauth_token"];
 		$relation->token_secret = $accessToken["oauth_token_secret"];
 		$relation->created = time();

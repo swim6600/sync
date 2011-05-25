@@ -7,64 +7,77 @@ class twitter extends app {
 	}
 
 	private function init() {
-		require_once config::read("vendor") . "oauth-php/OAuthStore.php";
-		require_once config::read("vendor") . "oauth-php/OAuthRequester.php";
-
-		// register at http://twitter.com/oauth_clients and fill these two
-		//define("TWITTER_CONSUMER_KEY", config::read("TWITTER_CONSUMER_KEY"));
-		//define("TWITTER_CONSUMER_SECRET", config::read("TWITTER_CONSUMER_SECRET"));
-		define("TWITTER_CONSUMER_KEY", "167761523");
-		define("TWITTER_CONSUMER_SECRET", "bb36d8eb19a0818a0008702275170c23");
-
-		//http://api.t.sina.com.cn/oauth/request_token
-		define("TWITTER_OAUTH_HOST", "http://api.t.sina.com.cn");
-		define("TWITTER_REQUEST_TOKEN_URL", TWITTER_OAUTH_HOST . "/oauth/request_token");
-		define("TWITTER_AUTHORIZE_URL", TWITTER_OAUTH_HOST . "/oauth/authorize");
-		define("TWITTER_ACCESS_TOKEN_URL", TWITTER_OAUTH_HOST . "/oauth/access_token");
-		define("TWITTER_PUBLIC_TIMELINE_API", TWITTER_OAUTH_HOST . "/statuses/public_timeline.json");
-		define("TWITTER_UPDATE_STATUS_API", TWITTER_OAUTH_HOST . "/statuses/update.json");
-
-		define('OAUTH_TMP_DIR', function_exists('sys_get_temp_dir') ? sys_get_temp_dir() : realpath($_ENV["TMP"]));
-
-		// Twitter test
-		$options = array('consumer_key' => TWITTER_CONSUMER_KEY, 'consumer_secret' => TWITTER_CONSUMER_SECRET);
-		OAuthStore::instance("2Leg", $options);
-
-		try {
-			// Obtain a request object for the request we want to make
-			$request = new OAuthRequester(TWITTER_REQUEST_TOKEN_URL, "POST");
-			$curl_socksopt = array(
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_PROXY => "localhost:8080",
-			CURLOPT_PROXYTYPE => CURLPROXY_SOCKS5
-			);
-			$result = $request->doRequest(0);
-			parse_str($result['body'], $params);
-
-			// now make the request.
-			//$request = new OAuthRequester(TWITTER_PUBLIC_TIMELINE_API, 'GET', $params);
-			//$result = $request->doRequest(0, $curl_socksopt);
-		}
-		catch(OAuthException2 $e) {
-			echo "Exception" . $e->getMessage();
-		}
+		define('CONSUMER_KEY', config::read("TWITTER_CONSUMER_KEY"));
+		define('CONSUMER_SECRET', config::read("TWITTER_CONSUMER_SECRET"));
+		require_once config::read("vendor") . "twitter/twitteroauth.php";
 	}
 
-	public function index() {
+	public function main_network() {
 		$this->init();
-		//$this->smarty->display("php:welcome.tpl");
-	}
+		$this->init_db();
+		$relation = new relation();
+		$data = $relation->getRelation($this->user["id"], "twitter");
+		$o = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $data->token, $data->token_secret);
+		$profile = $o->get('account/verify_credentials');
 
+		$this->db->BeginTrans();
+		$query = "update relations set is_main_network = 1, since_id = ? where user_id = ? and network = 'twitter'";
+		$ok = $this->db->execute($query, array($profile->status->id_str, $this->user["id"]));
+		if($ok) {
+			$query = "update relations set is_main_network = 0 where user_id = ? and network != 'twitter'";
+			$ok = $this->db->execute($query, array($this->user["id"]));
+		}
+		$this->db->CommitTrans($ok);
+		$this->redirect("dashboard");
+	}
+	
 	public function callback() {
-			
+		$this->init();
+		$token = session::get("twitterRequestToken");
+		$o = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $token['oauth_token'], $token['oauth_token_secret']);
+		$accessToken = $o->getAccessToken($this->get('oauth_verifier'));
+		
+		$verify = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $accessToken['oauth_token'], $accessToken['oauth_token_secret']);
+		$profile = $verify->get('account/verify_credentials');
+		
+		$this->init_db();
+		$relation = new relation();
+		$relation->user_id = $this->user["id"];
+		$relation->network = "twitter";
+		$relation->network_user_id = $accessToken["user_id"];
+		$relation->screen_name = $profile->screen_name;
+		$relation->since_id = $profile->status->id_str;
+		$connectedNum = $relation->getConnectedNum();
+		if($connectedNum) {
+			$relation->is_main_network = 0;
+		}else {
+			$relation->is_main_network = 1;
+		}
+		$relation->token = $accessToken["oauth_token"];
+		$relation->token_secret = $accessToken["oauth_token_secret"];
+		$relation->created = time();
+		$relation->updated = time();
+		
+		if(!$relation->Save()) {
+			throw new Exception(__("exception when saving access token", true));
+		}
+		$this->redirect("dashboard");
 	}
 
 	public function connect() {
-		;
+		$this->init();
+		$o = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
+		$callback = config::read("base.uri") . "twitter/callback";
+		$token = $o->getRequestToken($callback);
+		session::set("twitterRequestToken", $token);
+		$redirect_url = $o->getAuthorizeURL($token['oauth_token']);
+		$this->redirect($redirect_url, false);
 	}
 
 	public function disconnect() {
-			
+		$this->init_db();
+		$query = "delete from relations where user_id = ? and network = 'twitter'";
+		$this->db->execute($query, array($this->user["id"]));
+		$this->redirect("dashboard");
 	}
 }

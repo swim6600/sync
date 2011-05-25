@@ -18,6 +18,15 @@ class relation extends ADODB_Active_Record {
 			return false;
 		}
 	}
+	
+	public function getConnectedNum() {
+		$rs = $this->Find("user_id = ?", array($this->user_id));
+		if(!empty($rs)) {
+			return count($rs);
+		}else {
+			return 0;
+		}
+	}
 
 	public function getRelations($id) {
 		$rs = $this->Find("user_id = ?", array($id));

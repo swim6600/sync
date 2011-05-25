@@ -6,12 +6,6 @@
  */
 
 /* Load OAuth lib. You can find it at http://oauth.net */
-/**
- * @ignore
- */
-class OAuthException extends Exception {
-	// pass
-}
 
 require_once dirname(__FILE__) . '/../oauth.php';
 
