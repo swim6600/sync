@@ -1,5 +1,8 @@
 <?php
 require 'config/config.inc.php';
+
+define("CURRENT_PATH", dirname(__FILE__));
+
 array_shift($argv);
 if(isset($argv[0])) {
 	$controller = array_shift($argv);

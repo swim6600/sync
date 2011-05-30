@@ -2,7 +2,6 @@
 class sync extends app {
 
 	public function __construct() {
-		parent::__construct();
 	}
 	
 	public function loader() {
@@ -10,7 +9,7 @@ class sync extends app {
 		$model = new user();
 		$users = $model->Find("confirmed = 1");
 		foreach ($users as $user) {
-			exec("php /home/jeffery/workspace/Sync/application/i.php sync run " . $user->id);
+			exec("php " . config::read("root") . "i.php sync run " . $user->id);
 		}
 	}
 
