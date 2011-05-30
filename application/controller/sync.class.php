@@ -1,16 +1,15 @@
 <?php
 class sync extends app {
-	public $authorization = false;
 
 	public function __construct() {
 		parent::__construct();
 	}
 
-	public function index() {
+	public function index($user_id) {
 		$this->init_db();
 		$model = new relation();
-		$relations = $model->getRelations($this->user["id"]);
-
+		$relations = $model->getRelations($user_id);
+		
 		// networks contain other network without mainnetwork
 		$networks = array();
 		$messageCount = 0;
@@ -27,8 +26,8 @@ class sync extends app {
 			$status = $timeline_bot->getTimeLine($mainNetwork);
 			$messageCount = count($status);
 			foreach ($networks as $network) {
-				$update_bot = $this->getProcesser($network);
-				$update_bot->updateStatus($status);
+				//$update_bot = $this->getProcesser($network);
+				//$update_bot->updateStatus($status);
 			}
 			if($messageCount > 0) {
 				$update = array(
@@ -38,7 +37,7 @@ class sync extends app {
 				$mainNetwork->update($update);
 			}
 		}
-		echo sprintf("update ok: %s tweets.", $messageCount);
+		echo sprintf("update ok: %s tweets.\n", $messageCount);
 	}
 
 	private function getProcesser($relation) {

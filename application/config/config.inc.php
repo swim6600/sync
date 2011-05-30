@@ -1,6 +1,7 @@
 <?php
 require_once 'autoload.php';
-config::write('base.uri', 'http://192.168.100.51/');
+config::write('base.uri', 'http://192.168.100.51/i/');
+config::write('short.uri', 'http://fgg.me/');
 config::write('debug', '1');
 config::write('index.controller', 'welcome');
 config::write('auth.controller', 'dashboard');

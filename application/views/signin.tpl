@@ -10,7 +10,7 @@
 <blockquote>
 <div class="divBody">
 <div class="title blue"><?php echo $title; ?></div>
-<form action="/signin/auth" method="post">
+<form action="<?php echo config::read('base.uri'); ?>signin/auth" method="post">
 <ul>
 <li>email: <input type="text" name="email" class="input" /></li>
 <li>password: <input type="password" name="password" class="input" /></li>

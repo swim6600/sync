@@ -21,6 +21,10 @@ a.small{
     width: 480px;
 }
 
+.divIntro {
+    width: 640px;
+}
+
 ul{
     padding: 0px;
     margin-top: 2px;

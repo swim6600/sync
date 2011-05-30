@@ -25,6 +25,9 @@ if($url !== false) {
 }
 if(class_exists($controller)) {
 	$dispatch = new $controller;
+	if(!property_exists($dispatch, "authorization")) {
+		throw new Exception(__("oops, what are you looking for, dude?", true));
+	}
 	if($dispatch->authorization && $auth->authorized == false) {
 		// go login page
 		$dispatch = new signin;

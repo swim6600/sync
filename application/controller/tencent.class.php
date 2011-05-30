@@ -7,7 +7,6 @@ class tencent extends app {
 	}
 
 	public function init() {
-		require_once config::read("vendor") . "tencent/oauth.php";
 		require_once config::read("vendor") . "tencent/opent.php";
 		require_once config::read("vendor") . "tencent/api_client.php";
 

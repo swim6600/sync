@@ -62,6 +62,83 @@ class app extends object {
 		}
 	}
 
+	protected function __getCode($input) {
+		$base32 = array (
+    		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+    		'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    		'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+    		'y', 'z', '0', '1', '2', '3', '4', '5');
+
+		$hex = md5($input);
+		$hexLen = strlen($hex);
+		$subHexLen = $hexLen / 8;
+		$output = array();
+
+		for ($i = 0; $i < $subHexLen; $i++) {
+			$subHex = substr ($hex, $i * 8, 8);
+			$int = 0x3FFFFFFF & (1 * ('0x' . $subHex));
+			$out = '';
+
+			for ($j = 0; $j < 6; $j++) {
+				$val = 0x0000001F & $int;
+				$out .= $base32[$val ^ 7];
+				$int = $int >> 5;
+			}
+
+			$output[] = $out;
+		}
+
+		return $output;
+	}
+	
+	protected function encode($dec) {
+		$toRadix = 61;
+		$MIN_RADIX = 2;
+		$MAX_RADIX = 61;
+		// use i as directory, total 61
+		$num62 = '0123456789abcdefghjklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		if ($toRadix < $MIN_RADIX || $toRadix > $MAX_RADIX) {
+			$toRadix = 2;
+		}
+		if ($toRadix == 10) {
+			return $dec;
+		}
+		$buf = array();
+		$charPos = 64;
+		$isNegative = $dec < 0;
+		if (!$isNegative) {
+			$dec = -$dec;
+		}
+
+		while (bccomp($dec, -$toRadix) <= 0) {
+			$buf[$charPos--] = $num62[-bcmod($dec, $toRadix)];
+			$dec = bcdiv($dec, $toRadix);
+		}
+		$buf[$charPos] = $num62[-$dec];
+		if ($isNegative) {
+			$buf[--$charPos] = '-';
+		}
+		$_any = '';
+		for ($i = $charPos; $i < 65; $i++) {
+			$_any .= $buf[$i];
+		}
+		return $_any;
+	}
+
+	protected function decode($number) {
+		$fromRadix = 61;
+		// use i as directory, total 61
+		$num62 = '0123456789abcdefghjklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$dec = 0;
+		$digitValue = 0;
+		$len = strlen($number) - 1;
+		for ($t = 0; $t <= $len; $t++) {
+			$digitValue = strpos($num62, $number[$t]);
+			$dec = bcadd(bcmul($dec, $fromRadix), $digitValue);
+		}
+		return $dec;
+	}
+
 	protected function is_post() {
 		return $_SERVER["REQUEST_METHOD"] == "POST";
 	}
