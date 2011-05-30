@@ -5,6 +5,7 @@ config::write('short.uri', 'http://fgg.me/');
 config::write('debug', '1');
 config::write('index.controller', 'welcome');
 config::write('auth.controller', 'dashboard');
+config::write('ignored', "/#gfw|共产党/i");
 
 
 config::write('TWITTER_CONSUMER_KEY', 'i68binlpzc6qEM7RjKGZQA');

@@ -15,17 +15,22 @@ class signup extends app {
 
 	public function c() {
 		if($this->is_post()) {
+			$email = $this->get("email");
+			if(!$this->is_email($email)) {
+				throw new Exception(__("email not correct", true));
+			}
 			$password = $this->get("password");
 			$repassword = $this->get("repassword");
 			if($password != $repassword) {
-				throw new Exception(__("password not input correctly", true));
+				throw new Exception(__("password not correct", true));
 			}
 			$this->init_db();
 			$user = new user();
-			$user->email = $this->get("email");
+			$user->email = $email;
 			$user->password = md5($password);
 			$user->confirmed = "0";
 			$user->is_admin = "0";
+			$user->created = time();
 			if(!$user->Save()) {
 				throw new Exception(__("exception when creating user", true));
 			}

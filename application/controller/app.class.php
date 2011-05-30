@@ -90,7 +90,7 @@ class app extends object {
 
 		return $output;
 	}
-	
+
 	protected function encode($dec) {
 		$toRadix = 61;
 		$MIN_RADIX = 2;
@@ -139,6 +139,15 @@ class app extends object {
 		return $dec;
 	}
 
+	protected function is_email($email){
+		$pattern="/^([\w\.-]+)@([a-zA-Z0-9-]+)(\.[a-zA-Z\.]+)$/i";
+		if(preg_match($pattern, $email, $matches)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	protected function is_post() {
 		return $_SERVER["REQUEST_METHOD"] == "POST";
 	}
@@ -160,7 +169,7 @@ class app extends object {
 				$currentUser["email"] = $email;
 				$currentUser["is_admin"] = $res[0]->is_admin;
 				$currentUser["confirmed"] = $res[0]->confirmed;
-				
+
 				session::set("user", $currentUser);
 				return true;
 			}else {
@@ -168,7 +177,7 @@ class app extends object {
 			}
 		}
 	}
-	
+
 	protected function logout() {
 		if(session::get("user")) {
 			session::delcookie("user");

@@ -9,10 +9,10 @@
 <body>
 <blockquote>
 <div class="divBody">
-<div class="title blue"><a href="<?php echo config::read('base.uri'); ?>"><?php echo $title; ?></a></div>
+<div class="title blue"><?php echo $title; ?></div>
 <div><?php echo $message; ?></div>
 <div class="title blue"></div>
-<div><?php echo date("Y-m-d H:i:s", $created); ?></div>
+<div><a href="/"><?php echo date("Y-m-d H:i:s", $created); ?></a></div>
 </div>
 </blockquote>
 </body>

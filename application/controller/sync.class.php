@@ -4,8 +4,18 @@ class sync extends app {
 	public function __construct() {
 		parent::__construct();
 	}
+	
+	public function loader() {
+		$this->init_db();
+		$model = new user();
+		$users = $model->Find("confirmed = 1");
+		foreach ($users as $user) {
+			exec("php /home/jeffery/workspace/Sync/application/i.php sync run " . $user->id);
+		}
+	}
 
-	public function index($user_id) {
+	public function run($params) {
+		$user_id = $params[0];
 		$this->init_db();
 		$model = new relation();
 		$relations = $model->getRelations($user_id);
@@ -26,8 +36,8 @@ class sync extends app {
 			$status = $timeline_bot->getTimeLine($mainNetwork);
 			$messageCount = count($status);
 			foreach ($networks as $network) {
-				//$update_bot = $this->getProcesser($network);
-				//$update_bot->updateStatus($status);
+				$update_bot = $this->getProcesser($network);
+				$update_bot->updateStatus($status);
 			}
 			if($messageCount > 0) {
 				$update = array(

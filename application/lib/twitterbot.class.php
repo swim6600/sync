@@ -35,7 +35,10 @@ class twitterbot extends bot{
 				$this->newSinceId = $timeline->id_str;
 			}
 			$text = $timeline->text;
-			$status[] = $this->expand($text);
+			preg_match(config::read("ignored"), $text, $match);
+			if(empty($match[0])) {
+				$status[] = $this->expand($text);
+			}
 		}
 		
 		return array_reverse($status);

@@ -12,7 +12,6 @@ class bot extends app{
 
 	public function expand($message) {
 		// save message to the datebase if the message is larger than 140 length
-		$message .= $message . $message . $message . $message . $message . $message . $message . $message;
 		if(mb_strlen($message, "UTF-8") > 140) {
 			$this->init_db();
 			$model = new expand();

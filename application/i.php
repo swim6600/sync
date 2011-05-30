@@ -1,20 +1,26 @@
 <?php
 require 'config/config.inc.php';
-if(isset($argv[1])) {
-	$controller = $argv[1];
-}
-if(isset($argv[2])) {
-	$user_id = $argv[2];
+array_shift($argv);
+if(isset($argv[0])) {
+	$controller = array_shift($argv);
 }else {
-	throw new Exception(__("oops, user id", true));
+	throw new Exception(__("param, controller", true));
 }
-
-$action = "index";
+if(isset($argv[0])) {
+	$action = array_shift($argv);
+}else {
+	throw new Exception(__("param, action", true));
+}
+if(!empty($argv)) {
+	$params = $argv;
+}else {
+	$params = array();
+}
 
 if(class_exists($controller)) {
 	$dispatch = new $controller;
 	if(method_exists($dispatch, $action)) {
-		$dispatch->$action($user_id);
+		$dispatch->$action($params);
 	}else {
 		throw new Exception(__("oops, action", true));
 	}
