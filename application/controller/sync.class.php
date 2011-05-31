@@ -36,7 +36,11 @@ class sync extends app {
 			$messageCount = count($status);
 			foreach ($networks as $network) {
 				$update_bot = $this->getProcesser($network);
-				$update_bot->updateStatus($status);
+				try {
+					$update_bot->updateStatus($status);
+				}catch (exception $e) {
+					// do nothing
+				}
 			}
 			if($messageCount > 0) {
 				$update = array(
