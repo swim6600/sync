@@ -16,9 +16,11 @@ class show extends app {
 		if(empty($r)) {
 			throw new Exception(__("no specified message foud", true));
 		}
+		$text = $r[0]->text;
+		$text = preg_replace("/http:\/\/([^ ,\r\n]*)/i", "<a href=\"http://\$1\">\$1</a>", $text);
 		$smartyVars = array(
 			"title" => __("Expanded message", true),
-			"message" => $r[0]->text,
+			"message" => $text,
 			"created" => $r[0]->created
 		);
 		$this->smarty->assign($smartyVars);

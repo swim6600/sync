@@ -9,11 +9,34 @@
 <body>
 <blockquote>
 <div class="divBody">
+<br />
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-8788274414109571";
+/* 468x60 JustInput */
+google_ad_slot = "8650400952";
+google_ad_width = 468;
+google_ad_height = 60;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
 <div class="title blue"><?php echo $title; ?></div>
 <div><?php echo $message; ?></div>
 <div class="title blue"></div>
-<div><a href="/"><?php echo date("Y-m-d H:i:s", $created); ?></a></div>
 </div>
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-8788274414109571";
+/* fgg show */
+google_ad_slot = "6860392392";
+google_ad_width = 468;
+google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
 </blockquote>
 </body>
 </html>
