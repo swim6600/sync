@@ -11,6 +11,20 @@
 <blockquote>
 <div class="title orange">帐号设置</div>
 Hello <?php echo $user["email"]; ?> <br />
+<ol class="left">
+<li>如何使用?<br />
+点击下面的按钮来授权SyncBot访问你的帐号, 第一个被授权的帐号会成为你的主帐号, 所有主帐号发出的推, 会被SyncBot自动同步到其他非主账号去
+<li>如果选择性的禁止twitter上的不合法信息同步到新浪微博或者腾讯微博?<br />
+在twitter发推得时候加上 "#gfw" 标签,该推不会被同步到新浪和腾讯
+<li>请尽量手动控制好你发布的消息,避免SyncBot被和谐
+</ol>
+<?php
+if(isset($count)) {
+?>
+The actived users are: <?php echo $count; ?> <br />
+<?php
+}
+?>
 <blockquote>
 <?php
 if($weibo) {
@@ -81,6 +95,3 @@ if($twitter->is_main_network) {
 </div>
 </body>
 </html>
-
-
-

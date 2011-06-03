@@ -28,7 +28,7 @@ class signup extends app {
 			$user = new user();
 			$user->email = $email;
 			$user->password = md5($password);
-			$user->confirmed = "0";
+			$user->confirmed = "1";
 			$user->is_admin = "0";
 			$user->created = time();
 			if(!$user->Save()) {
