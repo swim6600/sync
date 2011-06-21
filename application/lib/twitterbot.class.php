@@ -3,7 +3,7 @@ class twitterbot extends bot{
 	public $client;
 	public $relation;
 	public $newSinceId;
-	
+
 	public function __construct($relation) {
 		$this->relation = $relation;
 		define('CONSUMER_KEY', config::read("TWITTER_CONSUMER_KEY"));
@@ -11,11 +11,11 @@ class twitterbot extends bot{
 		require_once config::read("vendor") . "twitter/twitteroauth.php";
 		$this->client = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $relation->token, $relation->token_secret);
 	}
-	
+
 	public function getNewSinceId() {
 		return $this->newSinceId;
 	}
-	
+
 	public function getTimeLine() {
 		$params = array(
 			"user_id" => $this->relation->network_user_id,
@@ -30,6 +30,9 @@ class twitterbot extends bot{
 		$i = 0;
 		$status = array();
 		foreach ($user_timeline as $timeline) {
+			if(!empty($timeline->in_reply_to_status_id_str)) {
+				continue;
+			}
 			$i ++;
 			if($i == 1) {
 				$this->newSinceId = $timeline->id_str;
@@ -40,10 +43,10 @@ class twitterbot extends bot{
 				$status[] = $this->expand($text);
 			}
 		}
-		
+
 		return array_reverse($status);
 	}
-	
+
 	public function updateStatus($status) {
 		foreach ($status as $message) {
 			$params = array(
